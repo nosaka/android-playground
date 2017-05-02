@@ -33,3 +33,17 @@ gen/dao/src-gen/
 .DS_Store
 .DS_Store?
 ._*
+.gitignore
+.idea/copyright/
+.idea/gradle.xml
+.idea/markdown-navigator/
+app/
+build.gradle
+gradle.properties
+gradle/
+gradlew
+gradlew.bat
+settings.gradle
+app/libs/
+app/src/main/java/
+app/src/main/res/drawable/
