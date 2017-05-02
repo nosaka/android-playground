@@ -1,1 +1,1 @@
-include ':app'
+include ':app_shortcuts', ':answer_phone_calls'
