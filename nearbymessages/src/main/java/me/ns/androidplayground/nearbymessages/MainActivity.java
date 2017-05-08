@@ -12,6 +12,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -153,6 +154,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         switch (item.getItemId()) {
             case R.id.main_PublishMessage:
                 publish(mMessageEditText.getText());
+                if (getCurrentFocus() != null) {
+                    InputMethodManager imm = getSystemService(InputMethodManager.class);
+                    imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                }
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -179,6 +184,12 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     // //////////////////////////////////////////////////////////////////////////
 
     @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        Snackbar.make(mContainer, "接続しました", Snackbar.LENGTH_SHORT).show();
+        subscribeMessages();
+    }
+
+    @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         if (connectionResult.hasResolution()) {
             try {
@@ -187,17 +198,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             }
         } else {
             String message = String.format(Locale.getDefault(),
-                    "接続エラー\nErrorCode:=%d, %s",
-                    connectionResult.getErrorCode(), connectionResult.getErrorMessage());
+                    "接続エラー\nErrorCode:=%d, %s", connectionResult.getErrorCode(), connectionResult.getErrorMessage());
             Snackbar.make(mContainer, message, Snackbar.LENGTH_LONG).show();
         }
-    }
-
-
-    @Override
-    public void onConnected(@Nullable Bundle bundle) {
-        Snackbar.make(mContainer, "接続しました", Snackbar.LENGTH_SHORT).show();
-        subscribeMessages();
     }
 
     @Override
