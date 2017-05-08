@@ -16,18 +16,34 @@ import com.google.android.gms.safetynet.SafetyNetApi;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.security.Key;
 import java.security.SecureRandom;
 import java.util.Locale;
 import java.util.Random;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwsHeader;
-import io.jsonwebtoken.SigningKeyResolver;
 
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
+
+    // //////////////////////////////////////////////////////////////////////////
+    // staticフィールド
+    // //////////////////////////////////////////////////////////////////////////
+
+    /**
+     * メニューID：セーフティネットの要求
+     */
+    private static final int MENU_REQUEST_SAFETY_NET = 0x001;
+
+    // //////////////////////////////////////////////////////////////////////////
+    // Bind UI
+    // //////////////////////////////////////////////////////////////////////////
+
+    @BindView(R.id.main_MessageTextView)
+    TextView mMessageTextView;
+
+    // //////////////////////////////////////////////////////////////////////////
+    // インスタンスフィールド
+    // //////////////////////////////////////////////////////////////////////////
 
     /**
      * {@link GoogleApiClient}
@@ -39,13 +55,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
      */
     private final Random mRandom = new SecureRandom();
 
-    /**
-     * メニューID：ショートカット追加
-     */
-    private static final int MENU_ADD_SAFETY_NET = 0x001;
-
-    @BindView(R.id.main_MessageTextView)
-    TextView mMessageTextView;
+    // //////////////////////////////////////////////////////////////////////////
+    // イベントメソッド
+    // //////////////////////////////////////////////////////////////////////////
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,14 +77,14 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        menu.add(Menu.NONE, MENU_ADD_SAFETY_NET, Menu.NONE, "SafetyNet");
+        menu.add(Menu.NONE, MENU_REQUEST_SAFETY_NET, Menu.NONE, "SafetyNet");
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case MENU_ADD_SAFETY_NET:
+            case MENU_REQUEST_SAFETY_NET:
                 // SafetyNetリクエストの送信
                 sendSafetyNetRequest();
                 return true;
@@ -80,6 +92,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 return super.onOptionsItemSelected(item);
         }
     }
+
+    // //////////////////////////////////////////////////////////////////////////
+    // interface実装メソッド
+    // //////////////////////////////////////////////////////////////////////////
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
@@ -89,6 +105,13 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         mMessageTextView.setText(message);
     }
 
+    // //////////////////////////////////////////////////////////////////////////
+    // その他メソッド
+    // //////////////////////////////////////////////////////////////////////////
+
+    /**
+     * build GoogleApiClient
+     */
     protected synchronized void buildGoogleApiClient() {
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addApi(SafetyNet.API)
@@ -124,19 +147,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                         }
                     }
                 });
-    }
-
-    private static class MySigningKeyResolver implements SigningKeyResolver {
-
-        @Override
-        public Key resolveSigningKey(JwsHeader header, Claims claims) {
-            return null;
-        }
-
-        @Override
-        public Key resolveSigningKey(JwsHeader header, String plaintext) {
-            return null;
-        }
     }
 
     /**
