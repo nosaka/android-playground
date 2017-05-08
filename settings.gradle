@@ -1,1 +1,1 @@
-include ':app_shortcuts'
+include ':app_shortcuts', ':safetynet'

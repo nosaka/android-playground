@@ -1,4 +1,4 @@
-package me.ns.androidplayground;
+package me.ns.androidplayground.appshortcuts;
 
 import android.app.Activity;
 import android.app.AlertDialog;
