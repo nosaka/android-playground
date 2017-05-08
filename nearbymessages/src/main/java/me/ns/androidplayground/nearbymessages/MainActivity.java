@@ -26,6 +26,7 @@ import com.google.android.gms.nearby.messages.Distance;
 import com.google.android.gms.nearby.messages.Message;
 import com.google.android.gms.nearby.messages.MessageListener;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Locale;
 
 import butterknife.BindView;
@@ -63,11 +64,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
      * {@link GoogleApiClient}
      */
     private GoogleApiClient mGoogleApiClient;
-
-    /**
-     * Active {@link Message}
-     */
-    private Message mActiveMessage;
 
     /**
      * {@link MessageListener}
@@ -230,18 +226,14 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
      * @param message メッセージ
      */
     private void publish(CharSequence message) {
-        mActiveMessage = new Message(message.toString().getBytes());
-        Nearby.Messages.publish(mGoogleApiClient, mActiveMessage);
-    }
-
-    /**
-     * Messages Unpublish
-     */
-    private void unpublish() {
-        if (mActiveMessage != null) {
-            Nearby.Messages.unpublish(mGoogleApiClient, mActiveMessage);
-            mActiveMessage = null;
+        try {
+            MessageContent content = new MessageContent(message.toString());
+            Message activeMessage = new Message(content.toString().getBytes("UTF-8"));
+            Nearby.Messages.publish(mGoogleApiClient, activeMessage);
+        } catch (UnsupportedEncodingException e) {
+            Snackbar.make(mContainer, "メッセージの送信に失敗しました", Snackbar.LENGTH_SHORT).show();
         }
+
     }
 
     /**

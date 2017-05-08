@@ -11,11 +11,17 @@ import android.widget.TextView;
 
 import com.google.android.gms.nearby.messages.Message;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 /**
  * Messageアダプタ
  * Created by shintaro.nosaka on 2017/05/08.
  */
 public class MessageAdapter extends ArrayAdapter<Message> {
+
+    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy/MM/dd HH:mm", Locale.getDefault());
 
     /**
      * コンストラクタ
@@ -24,6 +30,7 @@ public class MessageAdapter extends ArrayAdapter<Message> {
      */
     public MessageAdapter(@NonNull Context context) {
         super(context, 0);
+
     }
 
     @NonNull
@@ -53,8 +60,12 @@ public class MessageAdapter extends ArrayAdapter<Message> {
             return view;
         }
 
+        MessageContent content = MessageContent.from(new String(item.getContent()));
+
         // Viewを設定
-        viewHolder.labelTextView.setText(new String(item.getContent()));
+        viewHolder.labelTextView.setText(content.message);
+        viewHolder.userNameTextView.setText(content.userName);
+        viewHolder.timestampTextView.setText(DATE_FORMAT.format(new Date(content.timestamp)));
 
         return view;
     }
@@ -68,6 +79,10 @@ public class MessageAdapter extends ArrayAdapter<Message> {
 
         TextView labelTextView;
 
+        TextView timestampTextView;
+
+        TextView userNameTextView;
+
         /**
          * コンストラクタ
          *
@@ -75,6 +90,8 @@ public class MessageAdapter extends ArrayAdapter<Message> {
          */
         ViewHolder(View view) {
             labelTextView = (TextView) view.findViewById(R.id.listItemMessage_labelTextView);
+            timestampTextView = (TextView) view.findViewById(R.id.listItemMessage_timestampTextView);
+            userNameTextView = (TextView) view.findViewById(R.id.listItemMessage_userNameTextView);
         }
     }
 }
