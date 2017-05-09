@@ -1,1 +1,1 @@
-include ':app_shortcuts', ':safetynet', ':nearbymessages', ':lib'
+include ':app_shortcuts', ':safetynet', ':nearbymessages', ':lib', ':face'
