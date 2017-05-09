@@ -1,20 +1,28 @@
 package me.ns.androidplayground.nearbymessages;
 
+import android.Manifest;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.IntentSender;
+import android.content.pm.PackageManager;
+import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
+import android.support.design.widget.TextInputEditText;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.AdapterView;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -25,12 +33,15 @@ import com.google.android.gms.nearby.messages.BleSignal;
 import com.google.android.gms.nearby.messages.Distance;
 import com.google.android.gms.nearby.messages.Message;
 import com.google.android.gms.nearby.messages.MessageListener;
+import com.google.android.gms.nearby.messages.Strategy;
+import com.google.android.gms.nearby.messages.SubscribeOptions;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import me.ns.lib.AlertUtil;
 
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks {
 
@@ -41,7 +52,18 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     /**
      * リクエストコード：エラー受信時
      */
-    private static final int REQUEST_RESOLVE_ERROR = 1001;
+    private static final int REQUEST_RESOLVE_ERROR = 0x001;
+
+    /**
+     * リクエストコード：パーミッション要求
+     */
+    private static final int REQUEST_PERMISSIONS = 0x002;
+
+
+    /**
+     * Bundleキー：ユーザー名
+     */
+    private static final String KEY_BUNDLE_USER_NAME = "user_name";
 
     // //////////////////////////////////////////////////////////////////////////
     // Bind UI
@@ -50,8 +72,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     @BindView(R.id.main_Container)
     ViewGroup mContainer;
 
-    @BindView(R.id.main_MessageEditText)
-    EditText mMessageEditText;
+    @BindView(R.id.main_MessageTextInputEditText)
+    TextInputEditText mMessageTextInputEditText;
 
     @BindView(R.id.main_MessageListView)
     ListView mMessageListView;
@@ -59,6 +81,11 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     // //////////////////////////////////////////////////////////////////////////
     // インスタンスフィールド
     // //////////////////////////////////////////////////////////////////////////
+
+    /**
+     * ユーザ名
+     */
+    private String mUserName;
 
     /**
      * {@link GoogleApiClient}
@@ -72,26 +99,34 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
         @Override
         public void onFound(Message message) {
-            mMessageAdapter.insert(message, 0);
-            mMessageAdapter.notifyDataSetChanged();
+            if (!mMessageAdapter.isContains(message)) {
+                mMessageAdapter.insert(message, 0);
+                mMessageAdapter.notifyDataSetChanged();
+            }
         }
 
         @Override
         public void onLost(Message message) {
-            mMessageAdapter.insert(message, 0);
-            mMessageAdapter.notifyDataSetChanged();
+            if (!mMessageAdapter.isContains(message)) {
+                mMessageAdapter.insert(message, 0);
+                mMessageAdapter.notifyDataSetChanged();
+            }
         }
 
         @Override
         public void onDistanceChanged(Message message, Distance distance) {
-            mMessageAdapter.insert(message, 0);
-            mMessageAdapter.notifyDataSetChanged();
+            if (!mMessageAdapter.isContains(message)) {
+                mMessageAdapter.insert(message, 0);
+                mMessageAdapter.notifyDataSetChanged();
+            }
         }
 
         @Override
         public void onBleSignalChanged(Message message, BleSignal bleSignal) {
-            mMessageAdapter.insert(message, 0);
-            mMessageAdapter.notifyDataSetChanged();
+            if (!mMessageAdapter.isContains(message)) {
+                mMessageAdapter.insert(message, 0);
+                mMessageAdapter.notifyDataSetChanged();
+            }
         }
     };
 
@@ -111,32 +146,34 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
         ButterKnife.bind(this);
 
-        mMessageEditText.setText(null);
+        if (getIntent() != null && getIntent().hasExtra(KEY_BUNDLE_USER_NAME)) {
+            mUserName = getIntent().getStringExtra(KEY_BUNDLE_USER_NAME);
+        }
+        setTitle(mUserName);
+
+        mMessageTextInputEditText.setText(null);
         mMessageAdapter = new MessageAdapter(this);
         mMessageListView.setAdapter(mMessageAdapter);
 
-        mMessageEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        mMessageTextInputEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_SEND) {
-                    publish(mMessageEditText.getText());
+                    if (validation()) {
+                        publish(mMessageTextInputEditText.getText());
+                    }
                 }
                 return false;
-            }
-        });
-        mMessageListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Message item = mMessageAdapter.getItem(position);
-                if (item != null) {
-                    unsubscribeMessages();
-                }
-
             }
         });
 
         // GoogleApiClientをBuild
         buildGoogleApiClient();
+
+        // 位置情報有効チェック
+        if (checkLocationPermission()) {
+            checkLocationEnable();
+        }
     }
 
     @Override
@@ -149,7 +186,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.main_PublishMessage:
-                publish(mMessageEditText.getText());
+                if (validation()) {
+                    publish(mMessageTextInputEditText.getText());
+                }
                 if (getCurrentFocus() != null) {
                     InputMethodManager imm = getSystemService(InputMethodManager.class);
                     imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
@@ -191,10 +230,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             try {
                 connectionResult.startResolutionForResult(this, REQUEST_RESOLVE_ERROR);
             } catch (IntentSender.SendIntentException ignored) {
+                Snackbar.make(mContainer, "接続に失敗しました", Snackbar.LENGTH_SHORT).show();
             }
         } else {
-            String message = String.format(Locale.getDefault(),
-                    "接続エラー\nErrorCode:=%d, %s", connectionResult.getErrorCode(), connectionResult.getErrorMessage());
+            String message = String.format(Locale.getDefault(), "接続エラー\nErrorCode:=%d, %s", connectionResult.getErrorCode(), connectionResult.getErrorMessage());
             Snackbar.make(mContainer, message, Snackbar.LENGTH_LONG).show();
         }
     }
@@ -227,20 +266,22 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
      */
     private void publish(CharSequence message) {
         try {
-            MessageContent content = new MessageContent(message.toString());
+            MessageContent content = new MessageContent(message.toString(), mUserName);
             Message activeMessage = new Message(content.toString().getBytes("UTF-8"));
             Nearby.Messages.publish(mGoogleApiClient, activeMessage);
         } catch (UnsupportedEncodingException e) {
-            Snackbar.make(mContainer, "メッセージの送信に失敗しました", Snackbar.LENGTH_SHORT).show();
+            AlertUtil.showAlert(this, "メッセージの送信に失敗しました");
         }
-
     }
 
     /**
      * Messages Subscribe
      */
     private void subscribeMessages() {
-        Nearby.Messages.subscribe(mGoogleApiClient, mMessageListener);
+        SubscribeOptions options = new SubscribeOptions.Builder()
+                .setStrategy(Strategy.BLE_ONLY)
+                .build();
+        Nearby.Messages.subscribe(mGoogleApiClient, mMessageListener, options);
     }
 
     /**
@@ -250,6 +291,82 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         if (mGoogleApiClient.isConnected()) {
             Nearby.Messages.unsubscribe(mGoogleApiClient, mMessageListener);
         }
+    }
+
+    /**
+     * ヴァリデーション処理
+     *
+     * @return ヴァリデーション結果
+     */
+    private boolean validation() {
+        if (mMessageTextInputEditText.getText() == null || mMessageTextInputEditText.getText().length() <= 0) {
+            mMessageTextInputEditText.setError("メッセージを入力してください");
+            return false;
+        }
+        mMessageTextInputEditText.setError(null);
+        return true;
+    }
+
+    /**
+     * 位置情報パーミッションチェック
+     *
+     * @return チェック時点結果
+     */
+    private boolean checkLocationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
+                && ((ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+                || (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED))) {
+
+            // パーミッション要求
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_PERMISSIONS);
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(
+            int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_PERMISSIONS:
+                boolean granted = true;
+                for (int grantResult : grantResults) {
+                    granted &= grantResult == PackageManager.PERMISSION_GRANTED;
+                }
+                if (granted) {
+                    checkLocationEnable();
+                } else {
+                    AlertUtil.showAlert(this, "位置情報を許可しない場合はBLEを利用したNearby Messageは利用できません");
+                }
+        }
+    }
+
+    /**
+     * 位置情報有効チェック
+     */
+    protected void checkLocationEnable() {
+        LocationManager locationManager = getSystemService(LocationManager.class);
+        boolean enable = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
+                || locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+
+        if (!enable) {
+            AlertUtil.showConfirm(this, "位置情報を有効にしますか", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                }
+            }, null);
+        }
+    }
+
+    /**
+     * {@link Intent}生成
+     *
+     * @param context {@link Context}
+     * @return {@link Intent}
+     */
+    public static Intent newIntent(Context context, String userName) {
+        return new Intent(context, MainActivity.class).putExtra(KEY_BUNDLE_USER_NAME, userName);
     }
 
 }

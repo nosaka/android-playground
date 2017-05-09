@@ -6,15 +6,24 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <EditText
-        android:id="@+id/main_MessageEditText"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:imeOptions="actionSend"
-        android:inputType="text"
-        android:lines="1"
-        android:maxLines="1"
-        tools:ignore="LabelFor" />
+        android:orientation="vertical"
+        android:paddingEnd="16dp"
+        android:paddingStart="16dp"
+        android:paddingTop="8dp">
+
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/main_MessageTextInputEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:imeOptions="actionSend"
+            android:inputType="text"
+            android:lines="1"
+            android:maxLines="1" />
+
+    </LinearLayout>
 
     <ListView
         android:id="@+id/main_MessageListView"

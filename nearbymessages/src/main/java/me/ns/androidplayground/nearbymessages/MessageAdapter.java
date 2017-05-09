@@ -21,6 +21,9 @@ import java.util.Locale;
  */
 public class MessageAdapter extends ArrayAdapter<Message> {
 
+    /**
+     * 日付フォーマット
+     */
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy/MM/dd HH:mm", Locale.getDefault());
 
     /**
@@ -30,7 +33,6 @@ public class MessageAdapter extends ArrayAdapter<Message> {
      */
     public MessageAdapter(@NonNull Context context) {
         super(context, 0);
-
     }
 
     @NonNull
@@ -71,6 +73,29 @@ public class MessageAdapter extends ArrayAdapter<Message> {
     }
 
     /**
+     * 重複チェック
+     *
+     * @param message {@link Message}
+     * @return 重複是非
+     */
+    public boolean isContains(Message message) {
+        MessageContent messageContent = MessageContent.from(new String(message.getContent()));
+        if (messageContent == null || messageContent.id == null) {
+            return false;
+        }
+        for (int i = 0; i < getCount(); i++) {
+            Message item = getItem(i);
+            if (item != null) {
+                MessageContent itemContent = MessageContent.from(new String(item.getContent()));
+                if (messageContent.id.equals(itemContent.id)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
      * ViewHolder
      *
      * @author shintaro-nosaka
@@ -89,9 +114,9 @@ public class MessageAdapter extends ArrayAdapter<Message> {
          * @param view View
          */
         ViewHolder(View view) {
-            labelTextView = (TextView) view.findViewById(R.id.listItemMessage_labelTextView);
-            timestampTextView = (TextView) view.findViewById(R.id.listItemMessage_timestampTextView);
-            userNameTextView = (TextView) view.findViewById(R.id.listItemMessage_userNameTextView);
+            labelTextView = (TextView) view.findViewById(R.id.listItemMessage_LabelTextView);
+            timestampTextView = (TextView) view.findViewById(R.id.listItemMessage_TimestampTextView);
+            userNameTextView = (TextView) view.findViewById(R.id.listItemMessage_UserNameTextView);
         }
     }
 }

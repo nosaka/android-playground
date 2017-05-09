@@ -167,5 +167,4 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         return byteStream.toByteArray();
     }
 
-
 }

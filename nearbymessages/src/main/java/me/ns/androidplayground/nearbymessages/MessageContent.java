@@ -1,9 +1,9 @@
 package me.ns.androidplayground.nearbymessages;
 
-import android.os.Build;
-
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
+
+import java.util.UUID;
 
 /**
  * メッセージコンテンツ
@@ -17,19 +17,29 @@ public class MessageContent {
      */
     private static Gson sGson;
 
+    @SerializedName("id")
+    UUID id;
+
     @SerializedName("user_name")
-    public String userName;
+    String userName;
 
     @SerializedName("message")
-    public String message;
+    String message;
 
     @SerializedName("timestamp")
-    public Long timestamp;
+    Long timestamp;
 
-    public MessageContent(String inMessage) {
-        userName = Build.USER;
-        message = inMessage;
-        timestamp = System.currentTimeMillis();
+    /**
+     * コンストラクタ
+     *
+     * @param userName ユーザ名
+     * @param message  メッセージ
+     */
+    public MessageContent(String userName, String message) {
+        this.id = UUID.randomUUID();
+        this.userName = userName;
+        this.message = message;
+        this.timestamp = System.currentTimeMillis();
     }
 
     @Override
@@ -58,4 +68,5 @@ public class MessageContent {
         }
         return sGson;
     }
+
 }
