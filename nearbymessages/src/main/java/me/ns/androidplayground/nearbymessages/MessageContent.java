@@ -68,5 +68,4 @@ public class MessageContent {
         }
         return sGson;
     }
-
 }
