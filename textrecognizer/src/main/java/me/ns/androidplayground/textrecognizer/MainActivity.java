@@ -1,4 +1,4 @@
-package me.ns.androidplayground.barcode;
+package me.ns.androidplayground.textrecognizer;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -16,14 +16,15 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.gms.vision.Frame;
-import com.google.android.gms.vision.barcode.Barcode;
-import com.google.android.gms.vision.barcode.BarcodeDetector;
+import com.google.android.gms.vision.text.TextBlock;
+import com.google.android.gms.vision.text.TextRecognizer;
 
 import java.io.FileDescriptor;
 import java.io.IOException;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import me.ns.lib.AlertUtil;
 import me.ns.lib.LogUtil;
 
 public class MainActivity extends AppCompatActivity {
@@ -56,9 +57,9 @@ public class MainActivity extends AppCompatActivity {
     // //////////////////////////////////////////////////////////////////////////
 
     /**
-     * {@link BarcodeDetector}
+     * {@link TextRecognizer}
      */
-    private BarcodeDetector mBarcodeDetector;
+    private TextRecognizer mTextRecognizer;
 
     // //////////////////////////////////////////////////////////////////////////
     // イベントメソッド
@@ -74,10 +75,7 @@ public class MainActivity extends AppCompatActivity {
 
         mContentsTextView.setMovementMethod(ScrollingMovementMethod.getInstance());
 
-        mBarcodeDetector = new BarcodeDetector.Builder(getApplicationContext())
-                .setBarcodeFormats(Barcode.DATA_MATRIX | Barcode.QR_CODE)
-                .build();
-
+        mTextRecognizer = new TextRecognizer.Builder(getApplicationContext()).build();
 
         mExtractBarcodeImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -87,9 +85,11 @@ public class MainActivity extends AppCompatActivity {
                         .setType("image/*"), REQUEST_OPEN_GALLERY);
             }
         });
-        if (!mBarcodeDetector.isOperational()) {
+        if (!mTextRecognizer.isOperational()) {
             mContentsTextView.setText("セットアップが完了できませんでした");
         }
+
+        AlertUtil.showAlert(this, "このバージョンのTextRecognizerは日本語をサポートしていません");
     }
 
     @Override
@@ -165,15 +165,15 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
         Frame frame = new Frame.Builder().setBitmap(bitmap).build();
-        SparseArray<Barcode> barcodeItems = mBarcodeDetector.detect(frame);
-        for (int i = 0; i < barcodeItems.size(); i++) {
-            int key = barcodeItems.keyAt(i);
-            Barcode barcode = barcodeItems.get(key);
-            mContentsTextView.append(barcode.rawValue);
+        SparseArray<TextBlock> textBlockItems = mTextRecognizer.detect(frame);
+        for (int i = 0; i < textBlockItems.size(); i++) {
+            int key = textBlockItems.keyAt(i);
+            TextBlock textBlock = textBlockItems.get(key);
+            mContentsTextView.append(textBlock.getValue());
             mContentsTextView.append("\n");
         }
         if (mContentsTextView.getText() == null || mContentsTextView.getText().length() <= 0) {
-            mContentsTextView.setText("有効なバーコードデータがありません");
+            mContentsTextView.setText("有効なテキストがありません");
         }
     }
 
