@@ -1,12 +1,13 @@
 package me.ns.androidplayground.faceapi.camera;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.support.v4.app.ActivityCompat;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.view.View;
 import android.view.ViewGroup;
 
 import com.google.android.gms.common.images.Size;
@@ -15,18 +16,23 @@ import com.google.android.gms.vision.CameraSource;
 import java.io.IOException;
 
 import me.ns.androidplayground.faceapi.face.GraphicOverlay;
+import me.ns.lib.LogUtil;
 
 /**
+ * CameraSourcePreview
+ * <p>
  * Created by shintaro.nosaka on 2017/05/09.
  */
-
 public class CameraSourcePreview extends ViewGroup {
-    private static final String TAG = "CameraSourcePreview";
 
     private Context mContext;
+
     private SurfaceView mSurfaceView;
+
     private boolean mStartRequested;
+
     private boolean mSurfaceAvailable;
+
     private CameraSource mCameraSource;
 
     private GraphicOverlay mOverlay;
@@ -74,6 +80,9 @@ public class CameraSourcePreview extends ViewGroup {
     }
 
     private void startIfReady() throws IOException {
+        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
         if (mStartRequested && mSurfaceAvailable) {
             mCameraSource.start(mSurfaceView.getHolder());
             if (mOverlay != null) {
@@ -100,7 +109,7 @@ public class CameraSourcePreview extends ViewGroup {
             try {
                 startIfReady();
             } catch (IOException e) {
-                Log.e(TAG, "Could not start camera source.", e);
+                LogUtil.e(e);
             }
         }
 
@@ -153,20 +162,12 @@ public class CameraSourcePreview extends ViewGroup {
         try {
             startIfReady();
         } catch (IOException e) {
-            Log.e(TAG, "Could not start camera source.", e);
+            LogUtil.e(e);
         }
     }
 
     private boolean isPortraitMode() {
         int orientation = mContext.getResources().getConfiguration().orientation;
-        if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            return false;
-        }
-        if (orientation == Configuration.ORIENTATION_PORTRAIT) {
-            return true;
-        }
-
-        Log.d(TAG, "isPortraitMode returning false by default");
-        return false;
+        return orientation != Configuration.ORIENTATION_LANDSCAPE && orientation == Configuration.ORIENTATION_PORTRAIT;
     }
 }

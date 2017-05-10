@@ -1,5 +1,7 @@
 package me.ns.androidplayground.faceapi.face.util;
 
+import android.support.annotation.Nullable;
+
 import com.google.android.gms.vision.Detector;
 import com.google.android.gms.vision.Tracker;
 import com.google.android.gms.vision.face.Face;
@@ -43,5 +45,16 @@ public class GraphicFaceTracker extends Tracker<Face> {
     public void onDone() {
         mOverlay.remove(mFaceGraphic);
     }
+
+    /**
+     * {@link FaceGraphic}取得
+     *
+     * @return {@link FaceGraphic}
+     */
+    @Nullable
+    public FaceGraphic getFaceGraphic() {
+        return mFaceGraphic;
+    }
+
 
 }

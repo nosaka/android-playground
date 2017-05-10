@@ -1,135 +1,213 @@
 package me.ns.androidplayground.faceapi.activity;
 
 import android.Manifest;
-import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.vision.CameraSource;
 import com.google.android.gms.vision.MultiProcessor;
-import com.google.android.gms.vision.Tracker;
-import com.google.android.gms.vision.face.Face;
 import com.google.android.gms.vision.face.FaceDetector;
+import com.google.android.gms.vision.face.Landmark;
 
 import java.io.IOException;
 
-import me.ns.androidplayground.faceapi.camera.CameraSourcePreview;
-import me.ns.androidplayground.faceapi.face.util.GraphicFaceTracker;
-import me.ns.androidplayground.faceapi.face.GraphicOverlay;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import me.ns.androidplayground.faceapi.R;
+import me.ns.androidplayground.faceapi.camera.CameraSourcePreview;
+import me.ns.androidplayground.faceapi.face.FaceGraphic;
+import me.ns.androidplayground.faceapi.face.GraphicFaceTrackerFactory;
+import me.ns.androidplayground.faceapi.face.GraphicOverlay;
+import me.ns.lib.AlertUtil;
+import me.ns.lib.LogUtil;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final String TAG = "FaceTracker";
-
-    private CameraSource mCameraSource = null;
-
-    private CameraSourcePreview mPreview;
-
-    private GraphicOverlay mGraphicOverlay;
-
-    private static final int RC_HANDLE_GMS = 9001;
-
-    // permission request codes need to be < 256
-    private static final int RC_HANDLE_CAMERA_PERM = 2;
-
-    //==============================================================================================
-    // Activity Methods
-    //==============================================================================================
+    // //////////////////////////////////////////////////////////////////////////
+    // staticフィールド
+    // //////////////////////////////////////////////////////////////////////////
 
     /**
-     * Initializes the UI and initiates the creation of a face detector.
+     * リクエストコード：Google Play 利用不可エラー
      */
+    private static final int REQUEST_GOOGLE_API_AVAILABILITY_ERROR = 0x001;
+
+    /**
+     * リクエストコード：パーミッション要求
+     */
+    private static final int REQUEST_PERMISSIONS = 0x002;
+
+
+    // //////////////////////////////////////////////////////////////////////////
+    // Bind UI
+    // //////////////////////////////////////////////////////////////////////////
+
+    @BindView(R.id.main_CameraSourcePreview)
+    CameraSourcePreview mCameraSourcePreview;
+
+    @BindView(R.id.main_FaceGraphicOverlay)
+    GraphicOverlay mFaceGraphicOverlay;
+
+    @BindView(R.id.main_CameraSwitchFloatingActionButton)
+    FloatingActionButton mCameraSwitchFloatingActionButton;
+
+    @BindView(R.id.main_BottomMouthCheckBox)
+    CheckBox mBottomMouthCheckBox;
+
+    @BindView(R.id.main_LeftMouthCheckBox)
+    CheckBox mLeftMouthCheckBox;
+
+    @BindView(R.id.main_RightMouthCheckBox)
+    CheckBox mRightMouthCheckBox;
+
+    @BindView(R.id.main_NoseBaseCheckBox)
+    CheckBox mNoseBaseCheckBox;
+
+    @BindView(R.id.main_LeftEarTipCheckBox)
+    CheckBox mLeftEarTipCheckBox;
+
+    @BindView(R.id.main_LeftEarCheckBox)
+    CheckBox mLeftEarCheckBox;
+
+    @BindView(R.id.main_LeftEyeCheckBox)
+    CheckBox mLeftEyeCheckBox;
+
+    @BindView(R.id.main_LeftCheekCheckBox)
+    CheckBox mLeftCheekCheckBox;
+
+    @BindView(R.id.main_RightEarTipCheckBox)
+    CheckBox mRightEarTipCheckBox;
+
+    @BindView(R.id.main_RightEarCheckBox)
+    CheckBox mRightEarCheckBox;
+
+    @BindView(R.id.main_RightEyeCheckBox)
+    CheckBox mRightEyeCheckBox;
+
+    @BindView(R.id.main_RightCheekCheckBox)
+    CheckBox mRightCheekCheckBox;
+
+    // //////////////////////////////////////////////////////////////////////////
+    // インスタンスフィールド
+    // //////////////////////////////////////////////////////////////////////////
+
+    /**
+     * {@link CameraSource}
+     */
+    private CameraSource mCameraSource;
+
+    /**
+     * {@link GraphicFaceTrackerFactory}
+     */
+    private GraphicFaceTrackerFactory mGraphicFaceTrackerFactory;
+
+    // //////////////////////////////////////////////////////////////////////////
+    // イベントメソッド
+    // //////////////////////////////////////////////////////////////////////////
+
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
         setContentView(R.layout.activity_main);
 
-        mPreview = (CameraSourcePreview) findViewById(R.id.preview);
-        mGraphicOverlay = (GraphicOverlay) findViewById(R.id.faceOverlay);
+        ButterKnife.bind(this);
 
-        mPreview.setOnClickListener(new View.OnClickListener() {
+        mCameraSwitchFloatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                // 背面/正面カメラの切替
+                switchCamera();
             }
         });
 
-        // Check for the camera permission before accessing the camera.  If the
-        // permission is not granted yet, request permission.
-        int rc = ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA);
-        if (rc == PackageManager.PERMISSION_GRANTED) {
+        CompoundButton.OnCheckedChangeListener landmarkCheckedChangeListener = new CompoundButton.OnCheckedChangeListener() {
+
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                int landmarkType = -1;
+                switch (buttonView.getId()) {
+                    case R.id.main_BottomMouthCheckBox:
+                        landmarkType = Landmark.BOTTOM_MOUTH;
+                        break;
+                    case R.id.main_LeftMouthCheckBox:
+                        landmarkType = Landmark.LEFT_MOUTH;
+                        break;
+                    case R.id.main_RightMouthCheckBox:
+                        landmarkType = Landmark.RIGHT_MOUTH;
+                        break;
+                    case R.id.main_NoseBaseCheckBox:
+                        landmarkType = Landmark.NOSE_BASE;
+                        break;
+                    case R.id.main_LeftEarTipCheckBox:
+                        landmarkType = Landmark.LEFT_EAR_TIP;
+                        break;
+                    case R.id.main_LeftEarCheckBox:
+                        landmarkType = Landmark.LEFT_EAR;
+                        break;
+                    case R.id.main_LeftEyeCheckBox:
+                        landmarkType = Landmark.LEFT_EYE;
+                        break;
+                    case R.id.main_LeftCheekCheckBox:
+                        landmarkType = Landmark.LEFT_CHEEK;
+                        break;
+                    case R.id.main_RightEarTipCheckBox:
+                        landmarkType = Landmark.RIGHT_EAR_TIP;
+                        break;
+                    case R.id.main_RightEarCheckBox:
+                        landmarkType = Landmark.RIGHT_EAR;
+                        break;
+                    case R.id.main_RightEyeCheckBox:
+                        landmarkType = Landmark.RIGHT_EYE;
+                        break;
+                    case R.id.main_RightCheekCheckBox:
+                        landmarkType = Landmark.RIGHT_CHEEK;
+                        break;
+                    default:
+                        // 処理なし
+                }
+                if (mGraphicFaceTrackerFactory != null
+                        && mGraphicFaceTrackerFactory.getGraphicFaceTracker() != null
+                        && mGraphicFaceTrackerFactory.getGraphicFaceTracker().getFaceGraphic() != null) {
+                    FaceGraphic faceGraphic = mGraphicFaceTrackerFactory.getGraphicFaceTracker().getFaceGraphic();
+                    faceGraphic.setLandmarkVisibility(landmarkType, isChecked);
+                }
+
+            }
+        };
+
+        mBottomMouthCheckBox.setOnCheckedChangeListener(landmarkCheckedChangeListener);
+        mLeftMouthCheckBox.setOnCheckedChangeListener(landmarkCheckedChangeListener);
+        mRightMouthCheckBox.setOnCheckedChangeListener(landmarkCheckedChangeListener);
+        mNoseBaseCheckBox.setOnCheckedChangeListener(landmarkCheckedChangeListener);
+        mLeftEarTipCheckBox.setOnCheckedChangeListener(landmarkCheckedChangeListener);
+        mLeftEarCheckBox.setOnCheckedChangeListener(landmarkCheckedChangeListener);
+        mLeftEyeCheckBox.setOnCheckedChangeListener(landmarkCheckedChangeListener);
+        mLeftCheekCheckBox.setOnCheckedChangeListener(landmarkCheckedChangeListener);
+        mRightEarTipCheckBox.setOnCheckedChangeListener(landmarkCheckedChangeListener);
+        mRightEarCheckBox.setOnCheckedChangeListener(landmarkCheckedChangeListener);
+        mRightEyeCheckBox.setOnCheckedChangeListener(landmarkCheckedChangeListener);
+        mRightCheekCheckBox.setOnCheckedChangeListener(landmarkCheckedChangeListener);
+
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+            // Camera 許可済
             createCameraSource();
         } else {
+            // Camera パーミッション要求
             requestCameraPermission();
         }
-    }
 
-    /**
-     * Handles the requesting of the camera permission.  This includes
-     * showing a "Snackbar" message of why the permission is needed then
-     * sending the request.
-     */
-    private void requestCameraPermission() {
-        Log.w(TAG, "Camera permission is not granted. Requesting permission");
-
-        if (!ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA)) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, RC_HANDLE_CAMERA_PERM);
-            return;
-        }
-
-        Snackbar.make(mGraphicOverlay, "検出にはカメラへのアクセスが必要です",
-                Snackbar.LENGTH_INDEFINITE)
-                .setAction(android.R.string.ok, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.CAMERA}, RC_HANDLE_CAMERA_PERM);
-                    }
-                })
-                .show();
-    }
-
-    /**
-     * Creates and starts the camera.  Note that this uses a higher resolution in comparison
-     * to other detection examples to enable the barcode detector to detect small barcodes
-     * at long distances.
-     */
-    private void createCameraSource() {
-
-        FaceDetector detector = new FaceDetector.Builder(this)
-                .setClassificationType(FaceDetector.ALL_CLASSIFICATIONS)
-                .build();
-
-        detector.setProcessor(
-                new MultiProcessor.Builder<>(new GraphicFaceTrackerFactory())
-                        .build());
-        if (!detector.isOperational()) {
-            // Note: The first time that an app using face API is installed on a device, GMS will
-            // download a native library to the device in order to do detection.  Usually this
-            // completes before the app is run for the first time.  But if that download has not yet
-            // completed, then the above call will not detect any faces.
-            //
-            // isOperational() can be used to check if the required native library is currently
-            // available.  The detector will automatically become operational once the library
-            // download completes on device.
-            Log.w(TAG, "Face detector dependencies are not yet available.");
-        }
-
-        mCameraSource = new CameraSource.Builder(this, detector)
-                .setRequestedPreviewSize(640, 480)
-                .setFacing(CameraSource.CAMERA_FACING_FRONT)
-                .setRequestedFps(30.0f)
-                .build();
     }
 
     @Override
@@ -140,109 +218,164 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onPause() {
+        stopCameraSource();
         super.onPause();
-        mPreview.stop();
     }
 
     @Override
     protected void onDestroy() {
+        releaseCameraSource();
         super.onDestroy();
-        if (mCameraSource != null) {
-            mCameraSource.release();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode != REQUEST_PERMISSIONS) {
+            return;
+        }
+
+        boolean grants = true;
+        for (int grantResult : grantResults) {
+            grants &= grantResult == PackageManager.PERMISSION_GRANTED;
+        }
+        if (grants) {
+            createCameraSource();
+        } else {
+            AlertUtil.showAlert(this, "このアプリケーションをご利用になるにはカメラ権限への許可が必要です。\nアプリケーションが終了します", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    finish();
+                }
+            });
         }
     }
 
+    // //////////////////////////////////////////////////////////////////////////
+    // interface実装メソッド
+    // //////////////////////////////////////////////////////////////////////////
+
+    // //////////////////////////////////////////////////////////////////////////
+    // その他メソッド
+    // //////////////////////////////////////////////////////////////////////////
+
     /**
-     * Callback for the result from requesting permissions. This method
-     * is invoked for every call on {@link #requestPermissions(String[], int)}.
-     * <p>
-     * <strong>Note:</strong> It is possible that the permissions request interaction
-     * with the user is interrupted. In this case you will receive empty permissions
-     * and results arrays which should be treated as a cancellation.
-     * </p>
-     *
-     * @param requestCode  The request code passed in {@link #requestPermissions(String[], int)}.
-     * @param permissions  The requested permissions. Never null.
-     * @param grantResults The grant results for the corresponding permissions
-     *                     which is either {@link PackageManager#PERMISSION_GRANTED}
-     *                     or {@link PackageManager#PERMISSION_DENIED}. Never null.
-     * @see #requestPermissions(String[], int)
+     * パーミッション要求
      */
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (requestCode != RC_HANDLE_CAMERA_PERM) {
-            Log.d(TAG, "Got unexpected permission result: " + requestCode);
-            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    private void requestCameraPermission() {
+        if (!ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA)) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, REQUEST_PERMISSIONS);
             return;
         }
 
-        if (grantResults.length != 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            Log.d(TAG, "Camera permission granted - initialize the camera source");
-            // we have permission, so create the camerasource
-            createCameraSource();
-            return;
-        }
-
-        Log.e(TAG, "Permission not granted: results len = " + grantResults.length +
-                " Result code = " + (grantResults.length > 0 ? grantResults[0] : "(empty)"));
-
-        DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                finish();
-            }
-        };
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Face Tracker sample")
-                .setMessage("このアプリケーションは、カメラ権限を持たないため実行できません。 アプリケーションが終了します")
-                .setPositiveButton(android.R.string.ok, listener)
+        Snackbar.make(mFaceGraphicOverlay, "検出にはカメラへのアクセスが必要です",
+                Snackbar.LENGTH_INDEFINITE)
+                .setAction(android.R.string.ok, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.CAMERA}, REQUEST_PERMISSIONS);
+                    }
+                })
                 .show();
     }
 
-    //==============================================================================================
-    // Camera Source Preview
-    //==============================================================================================
+    /**
+     * カメラ生成処理
+     */
+    private void createCameraSource() {
+
+        FaceDetector detector = buildFaceDetector();
+        if (!detector.isOperational()) {
+            // Note: The first time that an app using face API is installed on a device, GMS will
+            // download a native library to the device in order to do detection.  Usually this
+            // completes before the app is run for the first time.  But if that download has not yet
+            // completed, then the above call will not detect any faces.
+            //
+            // isOperational() can be used to check if the required native library is currently
+            // available.  The detector will automatically become operational once the library
+            // download completes on device.
+            LogUtil.w("Face detector dependencies are not yet available.");
+        }
+
+        mCameraSource = new CameraSource.Builder(this, detector)
+                .setRequestedPreviewSize(640, 480)
+                .setFacing(CameraSource.CAMERA_FACING_FRONT)
+                .setRequestedFps(30.0f)
+                .build();
+    }
 
     /**
-     * Starts or restarts the camera source, if it exists.  If the camera source doesn't exist yet
-     * (e.g., because onResume was called before the camera source was created), this will be called
-     * again when the camera source is created.
+     * 背面/正面カメラ切替処理
+     */
+    private void switchCamera() {
+
+        // 現在のカメラを解放
+        releaseCameraSource();
+
+        FaceDetector detector = buildFaceDetector();
+        int facing = mCameraSource.getCameraFacing() == CameraSource.CAMERA_FACING_FRONT
+                ? CameraSource.CAMERA_FACING_BACK
+                : CameraSource.CAMERA_FACING_FRONT;
+
+        mCameraSource = new CameraSource.Builder(this, detector)
+                .setRequestedPreviewSize(640, 480)
+                .setFacing(facing)
+                .setRequestedFps(30.0f)
+                .build();
+
+        // カメラを開始
+        startCameraSource();
+    }
+
+    /**
+     * カメラ起動処理
      */
     private void startCameraSource() {
 
         // check that the device has play services available.
-        int code = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(
-                getApplicationContext());
+        int code = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(getApplicationContext());
         if (code != ConnectionResult.SUCCESS) {
-            Dialog dlg =
-                    GoogleApiAvailability.getInstance().getErrorDialog(this, code, RC_HANDLE_GMS);
-            dlg.show();
+            GoogleApiAvailability.getInstance().getErrorDialog(this, code, REQUEST_GOOGLE_API_AVAILABILITY_ERROR).show();
         }
 
         if (mCameraSource != null) {
             try {
-                mPreview.start(mCameraSource, mGraphicOverlay);
+                mCameraSourcePreview.start(mCameraSource, mFaceGraphicOverlay);
             } catch (IOException e) {
-                Log.e(TAG, "Unable to start camera source.", e);
+                LogUtil.e(e);
                 mCameraSource.release();
                 mCameraSource = null;
             }
         }
     }
 
-    //==============================================================================================
-    // Graphic Face Tracker
-    //==============================================================================================
+    /**
+     * カメラ停止処理
+     */
+    private void stopCameraSource() {
+        mCameraSourcePreview.stop();
+    }
 
     /**
-     * Factory for creating a face tracker to be associated with a new face.  The multiprocessor
-     * uses this factory to create face trackers as needed -- one for each individual.
+     * カメラ解放処理
      */
-    private class GraphicFaceTrackerFactory implements MultiProcessor.Factory<Face> {
-        @Override
-        public Tracker<Face> create(Face face) {
-            return new GraphicFaceTracker(mGraphicOverlay);
-        }
+    private void releaseCameraSource() {
+        mCameraSourcePreview.release();
     }
+
+    /**
+     * {@link FaceDetector}ビルド処理
+     *
+     * @return {@link FaceDetector}
+     */
+    private FaceDetector buildFaceDetector() {
+        FaceDetector detector = new FaceDetector.Builder(this)
+                .setClassificationType(FaceDetector.ALL_CLASSIFICATIONS)
+                .build();
+        mGraphicFaceTrackerFactory = new GraphicFaceTrackerFactory(mFaceGraphicOverlay);
+        detector.setProcessor(new MultiProcessor.Builder<>(mGraphicFaceTrackerFactory).build());
+        return detector;
+    }
+
 
 }

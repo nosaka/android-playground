@@ -18,14 +18,27 @@ package me.ns.androidplayground.faceapi.face;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.util.SparseBooleanArray;
 
 import com.google.android.gms.vision.face.Face;
+import com.google.android.gms.vision.face.Landmark;
+
+import java.util.List;
+import java.util.Locale;
+
+import me.ns.lib.LogUtil;
 
 /**
  * Graphic instance for rendering face position, orientation, and landmarks within an associated
  * graphic overlay view.
  */
 public class FaceGraphic extends GraphicOverlay.Graphic {
+
+    /**
+     * {@link Landmark}表示フラグ
+     */
+    private SparseBooleanArray mVisibilityLandmarks = new SparseBooleanArray();
+
     private static final float FACE_POSITION_RADIUS = 10.0f;
     private static final float ID_TEXT_SIZE = 40.0f;
     private static final float ID_Y_OFFSET = 50.0f;
@@ -99,9 +112,9 @@ public class FaceGraphic extends GraphicOverlay.Graphic {
         float y = translateY(face.getPosition().y + face.getHeight() / 2);
         canvas.drawCircle(x, y, FACE_POSITION_RADIUS, mFacePositionPaint);
         canvas.drawText("id: " + mFaceId, x + ID_X_OFFSET, y + ID_Y_OFFSET, mIdPaint);
-        canvas.drawText("happiness: " + String.format("%.2f", face.getIsSmilingProbability()), x - ID_X_OFFSET, y - ID_Y_OFFSET, mIdPaint);
-        canvas.drawText("right eye: " + String.format("%.2f", face.getIsRightEyeOpenProbability()), x + ID_X_OFFSET * 2, y + ID_Y_OFFSET * 2, mIdPaint);
-        canvas.drawText("left eye: " + String.format("%.2f", face.getIsLeftEyeOpenProbability()), x - ID_X_OFFSET * 2, y - ID_Y_OFFSET * 2, mIdPaint);
+
+        drawText(canvas, face);
+        drawLandmarks(canvas, face);
 
         // Draws a bounding box around the face.
         float xOffset = scaleX(face.getWidth() / 2.0f);
@@ -112,4 +125,57 @@ public class FaceGraphic extends GraphicOverlay.Graphic {
         float bottom = y + yOffset;
         canvas.drawRect(left, top, right, bottom, mBoxPaint);
     }
+
+    private void drawText(Canvas canvas, Face face) {
+
+        float bottomText = canvas.getHeight();
+        float paddingText = 50;
+
+        float smiling = face.getIsSmilingProbability();
+        float rightEyeOpen = face.getIsRightEyeOpenProbability();
+        float leftEyeOpen = face.getIsLeftEyeOpenProbability();
+        canvas.drawText("笑顔度: " + String.format(Locale.getDefault(), "%.2f", smiling),
+                0, bottomText - paddingText * 1, mIdPaint);
+        canvas.drawText("右目の開閉度: " + String.format(Locale.getDefault(), "%.2f", rightEyeOpen),
+                0, bottomText - paddingText * 2, mIdPaint);
+        canvas.drawText("左目目の開閉度: " + String.format(Locale.getDefault(), "%.2f", leftEyeOpen),
+                0, bottomText - paddingText * 3, mIdPaint);
+    }
+
+    private void drawLandmarks(Canvas canvas, Face face) {
+        List<Landmark> landmarks = face.getLandmarks();
+        for (Landmark landmark : landmarks) {
+            if (!getLandmarkVisibility(landmark.getType())) {
+                LogUtil.e("not visible");
+                continue;
+            }
+            float xLandmark = translateX(landmark.getPosition().x);
+            float yLandmark = translateY(landmark.getPosition().y);
+            canvas.drawCircle(xLandmark, yLandmark, FACE_POSITION_RADIUS, mFacePositionPaint);
+        }
+    }
+
+    /**
+     * {@link Landmark}表示設定
+     *
+     * @param landmarkType {@link Landmark#getType()}
+     * @param visibility   表示是非
+     */
+    public void setLandmarkVisibility(int landmarkType, boolean visibility) {
+        mVisibilityLandmarks.put(landmarkType, visibility);
+    }
+
+    /**
+     * {@link Landmark}表示取得
+     *
+     * @param landmarkType {@link Landmark#getType()}
+     */
+    public boolean getLandmarkVisibility(int landmarkType) {
+        // デフォルトは表示
+        if (mVisibilityLandmarks.indexOfKey(landmarkType) != -1) {
+            return mVisibilityLandmarks.get(landmarkType);
+        }
+        return true;
+    }
+
 }

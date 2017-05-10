@@ -42,7 +42,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
      */
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss", Locale.getDefault());
 
-
     // //////////////////////////////////////////////////////////////////////////
     // Bind UI
     // //////////////////////////////////////////////////////////////////////////

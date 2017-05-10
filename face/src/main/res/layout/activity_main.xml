@@ -1,22 +1,151 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:keepScreenOn="true"
-    android:orientation="vertical">
+    android:keepScreenOn="true">
 
     <me.ns.androidplayground.faceapi.camera.CameraSourcePreview
-        android:id="@+id/preview"
-        android:background="#00DDCC"
+        android:id="@+id/main_CameraSourcePreview"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:gravity="center">
 
         <me.ns.androidplayground.faceapi.face.GraphicOverlay
-            android:id="@+id/faceOverlay"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:id="@+id/main_FaceGraphicOverlay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center" />
 
     </me.ns.androidplayground.faceapi.camera.CameraSourcePreview>
 
-</LinearLayout>
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:orientation="horizontal">
+
+        <TableRow>
+
+            <CheckBox
+                android:id="@+id/main_BottomMouthCheckBox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="下口"
+                tools:ignore="HardcodedText" />
+
+            <CheckBox
+                android:id="@+id/main_LeftMouthCheckBox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="左口"
+                tools:ignore="HardcodedText" />
+
+            <CheckBox
+                android:id="@+id/main_RightMouthCheckBox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="右口"
+                tools:ignore="HardcodedText" />
+
+            <CheckBox
+                android:id="@+id/main_NoseBaseCheckBox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="鼻"
+                tools:ignore="HardcodedText" />
+        </TableRow>
+
+        <TableRow>
+
+            <CheckBox
+                android:id="@+id/main_LeftEarTipCheckBox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="左耳先"
+                tools:ignore="HardcodedText" />
+
+            <CheckBox
+                android:id="@+id/main_LeftEarCheckBox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="左耳"
+                tools:ignore="HardcodedText" />
+
+            <CheckBox
+                android:id="@+id/main_LeftEyeCheckBox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="左目"
+                tools:ignore="HardcodedText" />
+
+
+            <CheckBox
+                android:id="@+id/main_LeftCheekCheckBox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="左頬"
+                tools:ignore="HardcodedText" />
+
+        </TableRow>
+
+        <TableRow>
+
+            <CheckBox
+                android:id="@+id/main_RightEarTipCheckBox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="右耳先"
+                tools:ignore="HardcodedText" />
+
+            <CheckBox
+                android:id="@+id/main_RightEarCheckBox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="右耳"
+                tools:ignore="HardcodedText" />
+
+            <CheckBox
+                android:id="@+id/main_RightEyeCheckBox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="右目"
+                tools:ignore="HardcodedText" />
+
+
+            <CheckBox
+                android:id="@+id/main_RightCheekCheckBox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="右頬"
+                tools:ignore="HardcodedText" />
+
+        </TableRow>
+
+    </TableLayout>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/main_CameraSwitchFloatingActionButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:src="@drawable/ic_switch_camera_black_24dp"
+        app:layout_anchor="@+id/main_CameraSourcePreview"
+        app:layout_anchorGravity="start|top" />
+
+
+</android.support.design.widget.CoordinatorLayout>
