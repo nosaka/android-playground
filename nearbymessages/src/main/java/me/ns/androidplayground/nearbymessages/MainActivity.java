@@ -214,6 +214,23 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         super.onPause();
     }
 
+    @Override
+    public void onRequestPermissionsResult(
+            int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_PERMISSIONS:
+                boolean granted = true;
+                for (int grantResult : grantResults) {
+                    granted &= grantResult == PackageManager.PERMISSION_GRANTED;
+                }
+                if (granted) {
+                    checkLocationEnable();
+                } else {
+                    AlertUtil.showAlert(this, "位置情報を許可しない場合はBLEを利用したNearby Messageは利用できません");
+                }
+        }
+    }
+
     // //////////////////////////////////////////////////////////////////////////
     // interface実装メソッド
     // //////////////////////////////////////////////////////////////////////////
@@ -310,7 +327,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     /**
      * 位置情報パーミッションチェック
      *
-     * @return チェック時点結果
+     * @return チェック結果
      */
     private boolean checkLocationPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
@@ -322,23 +339,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             return false;
         }
         return true;
-    }
-
-    @Override
-    public void onRequestPermissionsResult(
-            int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
-        switch (requestCode) {
-            case REQUEST_PERMISSIONS:
-                boolean granted = true;
-                for (int grantResult : grantResults) {
-                    granted &= grantResult == PackageManager.PERMISSION_GRANTED;
-                }
-                if (granted) {
-                    checkLocationEnable();
-                } else {
-                    AlertUtil.showAlert(this, "位置情報を許可しない場合はBLEを利用したNearby Messageは利用できません");
-                }
-        }
     }
 
     /**
