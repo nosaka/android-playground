@@ -1,1 +1,1 @@
-include ':app_shortcuts', ':safetynet', ':nearbymessages', ':lib', ':face', ':barcode', ':textrecognizer', ':fingerprint'
+include ':app_shortcuts', ':safetynet', ':nearbymessages', ':lib', ':face', ':barcode', ':textrecognizer', ':fingerprint', ':supportsample'

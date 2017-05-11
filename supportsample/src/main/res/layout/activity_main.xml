@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/main_ExampleCardView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:id="@+id/main_ExampleImageView"
+                        android:layout_width="match_parent"
+                        android:layout_height="240dp"
+                        android:scaleType="centerCrop"
+                        tools:ignore="ContentDescription" />
+
+                    <TextView
+                        android:id="@+id/main_ExampleTitleTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentStart="true"
+                        android:layout_alignParentTop="true"
+                        android:layout_margin="8dp"
+                        android:ellipsize="end"
+                        android:lines="1"
+                        android:text="ABCDE FGHIJ KLMNO PQRST UVWXY Z"
+                        android:textSize="22sp"
+                        tools:ignore="HardcodedText" />
+
+                </RelativeLayout>
+
+                <TextView
+                    android:id="@+id/main_ExampleBodyTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp"
+                    android:ellipsize="end"
+                    android:lines="3"
+                    android:text="ABCDE FGHIJ KLMNO PQRST UVWXY Z ABCDE FGHIJ KLMNO PQRST UVWXY Z ABCDE FGHIJ KLMNO PQRST UVWXY Z ABCDE FGHIJ KLMNO PQRST UVWXY Z ABCDE FGHIJ KLMNO PQRST UVWXY Z ABCDE FGHIJ KLMNO PQRST UVWXY Z"
+                    tools:ignore="HardcodedText" />
+
+            </LinearLayout>
+
+
+        </android.support.v7.widget.CardView>
+
+        <Button
+            android:id="@+id/main_ExtractImageButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:text="画像をSDカードから読み込む\n(Palette Sample)"
+            tools:ignore="HardcodedText" />
+
+        <Button
+            android:id="@+id/main_CustomTabButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:text="Chromeを開く\n(Custom Tab)"
+            tools:ignore="HardcodedText" />
+
+    </LinearLayout>
+
+</ScrollView>

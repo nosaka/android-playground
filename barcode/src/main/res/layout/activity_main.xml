@@ -10,7 +10,7 @@
         android:id="@+id/main_ExtractBarcodeImageButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="画像をSDファイルから読み込む"
+        android:text="画像をSDカードから読み込む"
         tools:ignore="HardcodedText" />
 
     <TextView
