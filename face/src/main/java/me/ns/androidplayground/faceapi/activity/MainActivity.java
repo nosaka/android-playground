@@ -9,6 +9,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.SparseIntArray;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -47,6 +48,27 @@ public class MainActivity extends AppCompatActivity {
      * リクエストコード：パーミッション要求
      */
     private static final int REQUEST_PERMISSIONS = 0x002;
+
+
+    /**
+     * View / Face Typeマッピング
+     */
+    private static final SparseIntArray DICTIONARY_VIEW_FACE_TYPE = new SparseIntArray();
+
+    static {
+        DICTIONARY_VIEW_FACE_TYPE.put(R.id.main_BottomMouthCheckBox, Landmark.BOTTOM_MOUTH);
+        DICTIONARY_VIEW_FACE_TYPE.put(R.id.main_LeftCheekCheckBox, Landmark.LEFT_CHEEK);
+        DICTIONARY_VIEW_FACE_TYPE.put(R.id.main_LeftEarTipCheckBox, Landmark.LEFT_EAR_TIP);
+        DICTIONARY_VIEW_FACE_TYPE.put(R.id.main_LeftEarCheckBox, Landmark.LEFT_EAR);
+        DICTIONARY_VIEW_FACE_TYPE.put(R.id.main_LeftEyeCheckBox, Landmark.LEFT_EYE);
+        DICTIONARY_VIEW_FACE_TYPE.put(R.id.main_LeftMouthCheckBox, Landmark.LEFT_MOUTH);
+        DICTIONARY_VIEW_FACE_TYPE.put(R.id.main_NoseBaseCheckBox, Landmark.NOSE_BASE);
+        DICTIONARY_VIEW_FACE_TYPE.put(R.id.main_RightCheekCheckBox, Landmark.RIGHT_CHEEK);
+        DICTIONARY_VIEW_FACE_TYPE.put(R.id.main_RightEarTipCheckBox, Landmark.RIGHT_EAR_TIP);
+        DICTIONARY_VIEW_FACE_TYPE.put(R.id.main_RightEarCheckBox, Landmark.RIGHT_EAR);
+        DICTIONARY_VIEW_FACE_TYPE.put(R.id.main_RightEyeCheckBox, Landmark.RIGHT_EYE);
+        DICTIONARY_VIEW_FACE_TYPE.put(R.id.main_RightMouthCheckBox, Landmark.RIGHT_MOUTH);
+    }
 
 
     // //////////////////////////////////////////////////////////////////////////
@@ -116,6 +138,7 @@ public class MainActivity extends AppCompatActivity {
     // イベントメソッド
     // //////////////////////////////////////////////////////////////////////////
 
+
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
@@ -135,47 +158,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                int landmarkType = -1;
-                switch (buttonView.getId()) {
-                    case R.id.main_BottomMouthCheckBox:
-                        landmarkType = Landmark.BOTTOM_MOUTH;
-                        break;
-                    case R.id.main_LeftMouthCheckBox:
-                        landmarkType = Landmark.LEFT_MOUTH;
-                        break;
-                    case R.id.main_RightMouthCheckBox:
-                        landmarkType = Landmark.RIGHT_MOUTH;
-                        break;
-                    case R.id.main_NoseBaseCheckBox:
-                        landmarkType = Landmark.NOSE_BASE;
-                        break;
-                    case R.id.main_LeftEarTipCheckBox:
-                        landmarkType = Landmark.LEFT_EAR_TIP;
-                        break;
-                    case R.id.main_LeftEarCheckBox:
-                        landmarkType = Landmark.LEFT_EAR;
-                        break;
-                    case R.id.main_LeftEyeCheckBox:
-                        landmarkType = Landmark.LEFT_EYE;
-                        break;
-                    case R.id.main_LeftCheekCheckBox:
-                        landmarkType = Landmark.LEFT_CHEEK;
-                        break;
-                    case R.id.main_RightEarTipCheckBox:
-                        landmarkType = Landmark.RIGHT_EAR_TIP;
-                        break;
-                    case R.id.main_RightEarCheckBox:
-                        landmarkType = Landmark.RIGHT_EAR;
-                        break;
-                    case R.id.main_RightEyeCheckBox:
-                        landmarkType = Landmark.RIGHT_EYE;
-                        break;
-                    case R.id.main_RightCheekCheckBox:
-                        landmarkType = Landmark.RIGHT_CHEEK;
-                        break;
-                    default:
-                        // 処理なし
-                }
+                int landmarkType = DICTIONARY_VIEW_FACE_TYPE.get(buttonView.getId());
                 if (mGraphicFaceTrackerFactory != null
                         && mGraphicFaceTrackerFactory.getGraphicFaceTracker() != null
                         && mGraphicFaceTrackerFactory.getGraphicFaceTracker().getFaceGraphic() != null) {
@@ -370,6 +353,7 @@ public class MainActivity extends AppCompatActivity {
      */
     private FaceDetector buildFaceDetector() {
         FaceDetector detector = new FaceDetector.Builder(this)
+                .setMode(FaceDetector.ACCURATE_MODE)
                 .setClassificationType(FaceDetector.ALL_CLASSIFICATIONS)
                 .build();
         mGraphicFaceTrackerFactory = new GraphicFaceTrackerFactory(mFaceGraphicOverlay);

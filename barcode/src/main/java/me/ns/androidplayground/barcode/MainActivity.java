@@ -75,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
         mContentsTextView.setMovementMethod(ScrollingMovementMethod.getInstance());
 
         mBarcodeDetector = new BarcodeDetector.Builder(getApplicationContext())
-                .setBarcodeFormats(Barcode.DATA_MATRIX | Barcode.QR_CODE)
+                .setBarcodeFormats(Barcode.ALL_FORMATS)
                 .build();
 
 

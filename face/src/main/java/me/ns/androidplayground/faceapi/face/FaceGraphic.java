@@ -146,7 +146,7 @@ public class FaceGraphic extends GraphicOverlay.Graphic {
         List<Landmark> landmarks = face.getLandmarks();
         for (Landmark landmark : landmarks) {
             if (!getLandmarkVisibility(landmark.getType())) {
-                LogUtil.e("not visible");
+                LogUtil.d("★★★★", Integer.toString(landmark.getType()));
                 continue;
             }
             float xLandmark = translateX(landmark.getPosition().x);
@@ -172,7 +172,7 @@ public class FaceGraphic extends GraphicOverlay.Graphic {
      */
     public boolean getLandmarkVisibility(int landmarkType) {
         // デフォルトは表示
-        if (mVisibilityLandmarks.indexOfKey(landmarkType) != -1) {
+        if (mVisibilityLandmarks.indexOfKey(landmarkType) > 0) {
             return mVisibilityLandmarks.get(landmarkType);
         }
         return true;
