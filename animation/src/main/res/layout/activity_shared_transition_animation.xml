@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/sharedTransitionAnimation_Toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        app:title="Shared Transition Animation"
+        tools:ignore="HardcodedText" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <RadioGroup
+            android:id="@+id/sharedTransitionAnimation_TransitionRadioGroup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/sharedTransitionAnimation_TransitionExplodeRadioButton"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:checked="true"
+                android:text="Explode"
+                tools:ignore="HardcodedText" />
+
+            <RadioButton
+                android:id="@+id/sharedTransitionAnimation_TransitionFadeRadioButton"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="Fade"
+                tools:ignore="HardcodedText" />
+
+            <RadioButton
+                android:id="@+id/sharedTransitionAnimation_TransitionSlideRadioButton"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="Slide"
+                tools:ignore="HardcodedText" />
+
+            <RadioButton
+                android:id="@+id/sharedTransitionAnimation_TransitionChangeImageAndBoundsTransformRadioButton"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="Change\nImage&amp;Bounds"
+                tools:ignore="HardcodedText" />
+        </RadioGroup>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="2dp"
+            android:layout_marginTop="2dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <android.support.v7.widget.CardView
+                android:id="@+id/sharedTransitionAnimation_Example1CardView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <ImageView
+                            android:id="@+id/sharedTransitionAnimation_Example1ImageView"
+                            android:layout_width="match_parent"
+                            android:layout_height="120dp"
+                            android:scaleType="centerCrop"
+                            tools:ignore="ContentDescription" />
+
+                        <TextView
+                            android:id="@+id/sharedTransitionAnimation_Example1TitleTextView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentStart="true"
+                            android:layout_alignParentTop="true"
+                            android:layout_margin="8dp"
+                            android:ellipsize="end"
+                            android:lines="1"
+                            android:textSize="22sp"
+                            tools:ignore="HardcodedText" />
+
+                    </RelativeLayout>
+
+                    <TextView
+                        android:id="@+id/sharedTransitionAnimation_Example1BodyTextView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="8dp"
+                        android:ellipsize="end"
+                        android:lines="3"
+
+                        tools:ignore="HardcodedText" />
+
+                </LinearLayout>
+
+            </android.support.v7.widget.CardView>
+
+            <View
+                android:layout_width="4dp"
+                android:layout_height="0dp" />
+
+            <android.support.v7.widget.CardView
+                android:id="@+id/sharedTransitionAnimation_Example2CardView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <ImageView
+                            android:id="@+id/sharedTransitionAnimation_Example2ImageView"
+                            android:layout_width="match_parent"
+                            android:layout_height="120dp"
+                            android:layout_alignParentStart="true"
+                            android:layout_alignParentTop="true"
+                            android:scaleType="centerCrop"
+                            tools:ignore="ContentDescription" />
+
+                        <TextView
+                            android:id="@+id/sharedTransitionAnimation_Example2TitleTextView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentStart="true"
+                            android:layout_alignParentTop="true"
+                            android:layout_margin="8dp"
+                            android:ellipsize="end"
+                            android:lines="1"
+
+                            android:textSize="22sp"
+                            tools:ignore="HardcodedText" />
+
+                    </RelativeLayout>
+
+                    <TextView
+                        android:id="@+id/sharedTransitionAnimation_Example2BodyTextView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="8dp"
+                        android:ellipsize="end"
+                        android:lines="3"
+
+                        tools:ignore="HardcodedText" />
+
+                </LinearLayout>
+
+            </android.support.v7.widget.CardView>
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="2dp"
+            android:layout_marginTop="2dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <android.support.v7.widget.CardView
+                android:id="@+id/sharedTransitionAnimation_Example3CardView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <ImageView
+                            android:id="@+id/sharedTransitionAnimation_Example3ImageView"
+                            android:layout_width="match_parent"
+                            android:layout_height="120dp"
+                            android:scaleType="centerCrop"
+                            tools:ignore="ContentDescription" />
+
+                        <TextView
+                            android:id="@+id/sharedTransitionAnimation_Example3TitleTextView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentStart="true"
+                            android:layout_alignParentTop="true"
+                            android:layout_margin="8dp"
+                            android:ellipsize="end"
+                            android:lines="1"
+
+                            android:textSize="22sp"
+                            tools:ignore="HardcodedText" />
+
+                    </RelativeLayout>
+
+                    <TextView
+                        android:id="@+id/sharedTransitionAnimation_Example3BodyTextView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="8dp"
+                        android:ellipsize="end"
+                        android:lines="3"
+
+                        tools:ignore="HardcodedText" />
+
+                </LinearLayout>
+
+            </android.support.v7.widget.CardView>
+
+            <View
+                android:layout_width="4dp"
+                android:layout_height="0dp" />
+
+            <android.support.v7.widget.CardView
+                android:id="@+id/sharedTransitionAnimation_Example4CardView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <ImageView
+                            android:id="@+id/sharedTransitionAnimation_Example4ImageView"
+                            android:layout_width="match_parent"
+                            android:layout_height="120dp"
+                            android:scaleType="centerCrop"
+                            tools:ignore="ContentDescription" />
+
+                        <TextView
+                            android:id="@+id/sharedTransitionAnimation_Example4TitleTextView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentStart="true"
+                            android:layout_alignParentTop="true"
+                            android:layout_margin="8dp"
+                            android:ellipsize="end"
+                            android:lines="1"
+
+                            android:textSize="22sp"
+                            tools:ignore="HardcodedText" />
+
+                    </RelativeLayout>
+
+                    <TextView
+                        android:id="@+id/sharedTransitionAnimation_Example4BodyTextView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="8dp"
+                        android:ellipsize="end"
+                        android:lines="3"
+
+                        tools:ignore="HardcodedText" />
+
+                </LinearLayout>
+
+            </android.support.v7.widget.CardView>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

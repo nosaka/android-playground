@@ -7,9 +7,11 @@
 
     <Button
         android:id="@+id/main_AuthenticationFingerprintButton"
-        android:layout_width="match_parent"
+        android:layout_width="336dp"
         android:layout_height="wrap_content"
         android:text="指紋認証"
-        tools:ignore="HardcodedText" />
+        tools:ignore="HardcodedText"
+        tools:layout_editor_absoluteY="0dp"
+        tools:layout_editor_absoluteX="8dp" />
 
 </android.support.constraint.ConstraintLayout>
