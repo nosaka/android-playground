@@ -28,6 +28,12 @@ public class MainActivity extends AppCompatActivity {
     @BindView(R.id.main_ObjectAnimatorButton)
     Button mObjectAnimatorButton;
 
+    @BindView(R.id.main_ValueAnimatorButton)
+    Button mValueAnimatorButton;
+
+    @BindView(R.id.main_TransitionAnimationButton)
+    Button mTransitionAnimationButton;
+
 
     // //////////////////////////////////////////////////////////////////////////
     // インスタンスフィールド
@@ -59,6 +65,19 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 startActivity(ObjectAnimatorActivity.newIntent(MainActivity.this));
+            }
+        });
+
+        mValueAnimatorButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(ValueAnimatorActivity.newIntent(MainActivity.this));
+            }
+        });
+        mTransitionAnimationButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(TransitionAnimationActivity.newIntent(MainActivity.this));
             }
         });
 

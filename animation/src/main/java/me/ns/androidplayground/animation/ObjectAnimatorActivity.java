@@ -25,7 +25,7 @@ public class ObjectAnimatorActivity extends AppCompatActivity {
     /**
      * Bounce アニメーション再生時間
      */
-    private long DURATION_BOUNCE_ANIMATION = 4000L;
+    private long DURATION_BOUNCE_ANIMATION = 2500L;
 
     // //////////////////////////////////////////////////////////////////////////
     // Bind UI

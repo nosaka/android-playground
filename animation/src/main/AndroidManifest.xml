@@ -19,6 +19,8 @@
         <activity android:name=".DetailsActivity" />
         <activity android:name=".SharedTransitionAnimationActivity" />
         <activity android:name=".ObjectAnimatorActivity" />
+        <activity android:name=".ValueAnimatorActivity" />
+        <activity android:name=".TransitionAnimationActivity" />
     </application>
 
 </manifest>

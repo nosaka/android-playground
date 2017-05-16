@@ -33,8 +33,23 @@
             android:id="@+id/main_ObjectAnimatorButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Shared Transition Animation"
+            android:text="Object Animator"
             tools:ignore="HardcodedText" />
+
+        <Button
+            android:id="@+id/main_ValueAnimatorButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Value Animator"
+            tools:ignore="HardcodedText" />
+
+        <Button
+            android:id="@+id/main_TransitionAnimationButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Transition Animation"
+            tools:ignore="HardcodedText" />
+
 
     </LinearLayout>
 
