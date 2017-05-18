@@ -62,6 +62,14 @@ NFC APIのサンプルです。
 
 <img src="Example/textrecognizer.gif" width="180" height="320">
 
+## lifecycles
+[Lifecycles](https://developer.android.com/topic/libraries/architecture/lifecycle.html)のサンプルです。
+使い所としては以下ような使い方で効果を発揮すると思われます。
+- ライフサイクルごとに管理が必要なLocationManagerをActivity毎に一々LocationManager#requestLocationUpdatesしたり、LocationManager#removeUpdatesしていたものを、
+ライフサイクルを内包した独自クラスを定義することで一元管理できる
+- FragmentとActivity間のデータ通信(ActivityとActivityは不可)したい場合に簡単に同期できる
+- 画面オリエンテーションを行う場合のデータ復帰などが簡単に行える
+
 
 
 
