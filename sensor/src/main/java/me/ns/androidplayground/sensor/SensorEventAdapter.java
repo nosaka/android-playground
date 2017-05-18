@@ -10,10 +10,6 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -24,9 +20,9 @@ import butterknife.ButterKnife;
 public class SensorEventAdapter extends ArrayAdapter<SensorEvent> {
 
     /**
-     * 日付フォーマット
+     * タイムスタンプ
      */
-    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy/MM/dd", Locale.getDefault());
+    private long mTimestamp;
 
     /**
      * コンストラクタ
@@ -65,8 +61,7 @@ public class SensorEventAdapter extends ArrayAdapter<SensorEvent> {
         }
 
         // Viewを設定
-        viewHolder.sensorNameTextView.setText(Constants.getSensorName(item.sensor.getType()));
-        viewHolder.dateTextView.setText(DATE_FORMAT.format(new Date(item.timestamp)));
+        viewHolder.dateTextView.setText(Long.toString(item.timestamp));
         viewHolder.dataTextView.setText(Constants.getData(item));
 
         return view;
@@ -78,9 +73,6 @@ public class SensorEventAdapter extends ArrayAdapter<SensorEvent> {
      * @author shintaro-nosaka
      */
     static class ViewHolder {
-
-        @BindView(R.id.listItemSensorEvent_SensorNameTextView)
-        TextView sensorNameTextView;
 
         @BindView(R.id.listItemSensorEvent_DateTextView)
         TextView dateTextView;
@@ -96,5 +88,14 @@ public class SensorEventAdapter extends ArrayAdapter<SensorEvent> {
         ViewHolder(View view) {
             ButterKnife.bind(this, view);
         }
+    }
+
+    /**
+     * タイムスタンプ設定処理
+     *
+     * @param timestamp タイムスタンプ
+     */
+    public void setTimestamp(long timestamp) {
+        mTimestamp = timestamp;
     }
 }

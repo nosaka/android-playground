@@ -16,6 +16,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RadioButton;
 
 import java.util.HashMap;
 import java.util.List;
@@ -42,8 +43,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     @BindView(R.id.main_ListView)
     ListView mListView;
 
-    @BindView(R.id.main_NavigationContainer)
-    ViewGroup mNavigationContainer;
+    @BindView(R.id.main_NavigationRadioGroup)
+    ViewGroup mNavigationRadioGroup;
 
     // //////////////////////////////////////////////////////////////////////////
     // インスタンスフィールド
@@ -134,10 +135,19 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         if (sensor != null) {
             if (isChecked) {
                 mSensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_NORMAL);
+                mSensorEventAdapter.setTimestamp(System.currentTimeMillis());
+                setTitle(Constants.getSensorName(sensor.getType()));
             } else {
                 mSensorManager.unregisterListener(this, sensor);
+                mSensorEventAdapter.clear();
             }
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        mSensorManager.unregisterListener(this);
+        super.onDestroy();
     }
 
     // //////////////////////////////////////////////////////////////////////////
@@ -152,14 +162,14 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
      */
     private int addSensorCheckBox(Sensor sensor) {
         int id = View.generateViewId();
-        CheckBox checkBox = new CheckBox(this);
+        RadioButton radioButton = new RadioButton(this);
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         lp.setMargins(0, 16, 0, 16);
-        checkBox.setText(Constants.getSensorName(sensor.getType()));
-        checkBox.setId(id);
-        checkBox.setChecked(false);
-        checkBox.setOnCheckedChangeListener(this);
-        mNavigationContainer.addView(checkBox, lp);
+        radioButton.setText(Constants.getSensorName(sensor.getType()));
+        radioButton.setId(id);
+        radioButton.setChecked(false);
+        radioButton.setOnCheckedChangeListener(this);
+        mNavigationRadioGroup.addView(radioButton, lp);
 
         return id;
     }
