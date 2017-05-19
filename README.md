@@ -71,7 +71,15 @@ NFC APIのサンプルです。
 - ライフサイクルごとに管理が必要なLocationManagerをActivity毎に一々LocationManager#requestLocationUpdatesしたり、LocationManager#removeUpdatesしていたものを、
 ライフサイクルを内包した独自クラスを定義することで一元管理できる
 
+## room
+[Room](https://developer.android.com/topic/libraries/architecture/room.html)のサンプルです。
+GreenDaoとの登録、取得時の比較ができます。
+以下は計測結果の1つです。
 
+|lib|3万件登録|10万件登録(一括)|10万件取得|
+|:--:|:--:|:--:|:--:|
+|Room|17065ミリ秒|3528ミリ秒|2304ミリ秒|
+|GreenDao|228229ミリ秒|4234ミリ秒|3860ミリ秒|
 
 
 

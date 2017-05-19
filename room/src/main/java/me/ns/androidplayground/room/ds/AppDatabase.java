@@ -41,23 +41,4 @@ public abstract class AppDatabase extends RoomDatabase {
         INSTANCE = null;
     }
 
-    public static void initializeDatabase(Context context) {
-        AppDatabase db = AppDatabase.getInMemoryDatabase(context);
-        db.model().deleteDirectory();
-        db.model().deleteImage();
-
-
-        for (int i = 0; i < 10; i++) {
-            Directory directory = new Directory();
-            directory.path = "path:" + Integer.toString(i);
-            db.model().insert(directory);
-            for (int j = 0; j < 10; j++) {
-                Image image = new Image();
-                image.parentPath = directory.path;
-                image.path = "path:" + Integer.toString(j);
-                db.model().insert(image);
-            }
-        }
-    }
-
 }

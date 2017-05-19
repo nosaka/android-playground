@@ -1,11 +1,153 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/main_TextView"
+    <ProgressBar
+        android:id="@+id/main_ProgressBar"
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-</FrameLayout>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginBottom="32dp"
+                android:layout_marginTop="32dp"
+                android:background="#C0C0C0" />
+
+            <Button
+                android:id="@+id/main_MeasureRoomButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Roomデータ3万件登録計測(1件づつ)"
+                tools:ignore="HardcodedText" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="8dp"
+                android:paddingTop="8dp"
+                android:text="Roomを使用して3万件のレコードを1件づつ登録します"
+                android:textSize="12sp"
+                tools:ignore="HardcodedText" />
+
+            <TextView
+                android:id="@+id/main_MeasureRoomResultTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#f9f99c"
+                android:minHeight="32dp" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginBottom="32dp"
+                android:layout_marginTop="32dp"
+                android:background="#C0C0C0" />
+
+            <Button
+                android:id="@+id/main_MeasureBulkRoomButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Roomデータ10万件登録計測(一括)"
+                tools:ignore="HardcodedText" />
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="8dp"
+                android:paddingTop="8dp"
+                android:text="Roomを使用して10万件のレコードを一括登録します\n登録処理の完了後、データを取得する場合の計測も一緒に行います"
+                android:textSize="12sp"
+                tools:ignore="HardcodedText" />
+
+            <TextView
+                android:id="@+id/main_MeasureBulkRoomResultTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#f9f939"
+                android:minHeight="32dp" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginBottom="32dp"
+                android:layout_marginTop="32dp"
+                android:background="#C0C0C0" />
+
+            <Button
+                android:id="@+id/main_MeasureGreenDaoButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="GreenDaoデータ3万件登録計測(1件づつ)"
+                tools:ignore="HardcodedText" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="8dp"
+                android:paddingTop="8dp"
+                android:text="GreenDaoを使用して3万件のレコードを1件づつ登録します"
+                android:textSize="12sp"
+                tools:ignore="HardcodedText" />
+
+            <TextView
+                android:id="@+id/main_MeasureGreenDaoResultTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#00CC00"
+                android:minHeight="32dp" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginBottom="32dp"
+                android:layout_marginTop="32dp"
+                android:background="#C0C0C0" />
+
+            <Button
+                android:id="@+id/main_MeasureBulkGreenDaoButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="GreenDaoデータ10万件登録計測(一括)"
+                tools:ignore="HardcodedText" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="8dp"
+                android:paddingTop="8dp"
+                android:text="GreenDaoを使用して10万件のレコードを一括登録します\n登録処理の完了後、データを取得する場合の計測も一緒に行います"
+                android:textSize="12sp"
+                tools:ignore="HardcodedText" />
+
+            <TextView
+                android:id="@+id/main_MeasureBulkGreenDaoResultTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#00cca7"
+                android:minHeight="32dp" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginBottom="32dp"
+                android:layout_marginTop="32dp"
+                android:background="#C0C0C0" />
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

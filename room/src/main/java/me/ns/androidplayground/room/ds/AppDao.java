@@ -20,7 +20,10 @@ public interface AppDao {
     void deleteDirectory();
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    void insert(Directory value);
+    void insertDirectory(Directory value);
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    void insertDirectory(List<Directory> value);
 
     @Query("SELECT * FROM Image")
     List<Image> allImage();
@@ -29,7 +32,10 @@ public interface AppDao {
     void deleteImage();
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    void insert(Image value);
+    void insertImage(Image value);
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    void insertImage(List<Image> value);
 
 
 }
