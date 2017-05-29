@@ -1,5 +1,5 @@
 # android-playground
-android-playground
+android-playground。Android周りで個人的に少し触ってみたものをおいている遊び場です。
 
 ## animation
 
